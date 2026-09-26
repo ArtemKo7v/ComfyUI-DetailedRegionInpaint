@@ -1,0 +1,14 @@
+# pyproject.toml
+[project]
+name = "comfyui-detailedregioninpaint"
+description = "ComfyUI nodes for detailed region inpainting with smart cropping, upscaling, and seamless compositing back into the original image."
+version = "0.0.1"
+license = { text = "MIT" }
+dependencies  = []
+
+[project.urls]
+Repository = "https://github.com/ArtemKo7v/ComfyUI-DetailedRegionInpaint"
+
+[tool.comfy]
+PublisherId = "artemko7v"
+DisplayName = "ComfyUI Detailed Region Inpaint"
