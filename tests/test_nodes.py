@@ -74,6 +74,32 @@ class RegionNodesTests(unittest.TestCase):
         restored, = self.restore.restore(self.image, white, self.mask, blur_data)
         self.assertTrue(torch.equal(restored[self.mask[..., None].expand_as(self.image) == 0], self.image[self.mask[..., None].expand_as(self.image) == 0]))
 
+    def test_blur_sigma_is_in_output_pixels(self):
+        image = torch.zeros(1, 128, 128, 3)
+        mask = torch.zeros(1, 128, 128)
+        mask[:, 64, 64] = 1
+        sigma = 3.0
+
+        def variance(value):
+            weights = value[0].sum(dim=0)
+            weights = weights / weights.sum()
+            positions = torch.arange(weights.numel(), dtype=weights.dtype)
+            center = (positions * weights).sum()
+            return ((positions - center).square() * weights).sum().item()
+
+        # A Gaussian adds sigma squared to the spatial variance. Subtract the
+        # unblurred output variance to account for interpolation's own softness.
+        for scale, max_size in ((1, 1024), (2, 1024), (4, 192), (1, 64)):
+            with self.subTest(scale=scale, max_size=max_size):
+                _, plain, plain_data = self.prepare.prepare(
+                    image, mask, padding=128, scale=scale, max_size=max_size, mask_blur=0
+                )
+                _, blurred, blur_data = self.prepare.prepare(
+                    image, mask, padding=128, scale=scale, max_size=max_size, mask_blur=sigma
+                )
+                self.assertEqual(plain_data, blur_data)
+                self.assertAlmostEqual(variance(blurred) - variance(plain), sigma ** 2, delta=0.2)
+
     def test_soft_mask_blend_and_outside_preservation(self):
         self.mask[:, 15, 25] = 0.25
         self.mask[:, 15, 26] = 1

@@ -22,7 +22,7 @@ The two nodes are in **ArtemKo7v/inpaint**. The `region_data` socket carries the
 | `padding` | 32 | Context pixels around the nonzero mask bounds, clipped to the source image. |
 | `scale` | 2.0 | Requested enlargement factor; 1.0 keeps the crop at its original size unless `max_size` requires a reduction. |
 | `max_size` | 1024 | Maximum width or height of the prepared crop. |
-| `mask_blur` | 0.0 | Gaussian blur sigma, in source crop pixels, for the mask sent to the inpainting workflow. |
+| `mask_blur` | 0.0 | Gaussian blur sigma in output mask pixels, applied after resizing. The specified value is independent of `scale` and `max_size`. |
 
 The bounds are calculated from the **original, unblurred** mask. Prepare uses bicubic image resizing and bilinear mask resizing. It favors dimensions divisible by 8 when doing so keeps nearly the same aspect ratio and resolution.
 

@@ -110,8 +110,10 @@ class ArtemKo7v_DetailedRegionInpaint_PrepareInpaintRegion:
 
         crop_image = image[:, y0:y1, x0:x1, :]
         crop_mask = mask[:, y0:y1, x0:x1].to(device=image.device, dtype=torch.float32).clamp(0, 1)
-        crop_mask = _blur_mask(crop_mask, mask_blur)
         target_width, target_height, effective_scale = _target_size(crop_width, crop_height, scale, max_size)
+        crop_mask = _resize_mask(crop_mask, target_width, target_height)
+        # Sigma is measured in output mask pixels, regardless of scale or max_size.
+        crop_mask = _blur_mask(crop_mask, mask_blur)
         region_data = {
             "source_width": width,
             "source_height": height,
@@ -125,7 +127,7 @@ class ArtemKo7v_DetailedRegionInpaint_PrepareInpaintRegion:
         }
         return (
             _resize_image(crop_image, target_width, target_height),
-            _resize_mask(crop_mask, target_width, target_height),
+            crop_mask,
             region_data,
         )
 
