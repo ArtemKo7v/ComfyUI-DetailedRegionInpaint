@@ -12,3 +12,4 @@ Repository = "https://github.com/ArtemKo7v/ComfyUI-DetailedRegionInpaint"
 [tool.comfy]
 PublisherId = "artemko7v"
 DisplayName = "ComfyUI Detailed Region Inpaint"
+Icon = "https://raw.githubusercontent.com/ArtemKo7v/ComfyUI-DetailedRegionInpaint/main/images/icon.gif"
